@@ -1,28 +1,29 @@
 {% extends 'base.html' %}
-    {% include 'nav.html' %}
+{% block title %} Bonds Careers Site {% endblock %}
+{% include 'nav.html' %}
 {% block content %}
-    <div class="container">
-        <h1 class="text-center mt-4 mb-4">Bonds Careers</h1>
-        <img id="banner" class="img-fluid" src="static/banner.jpg" alt="logo">
-        <h2 class="text-center">About Bonds Careers</h2>
-        <div class="row">
-            <div class="col-md-8">
-                <p class='lead'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                    voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </div>
-            <div class="col-md-4">
-                <img id="banner" style="width: 500px" class="img-fluid" src="static/workers2.jpg" alt="workers">
-            </div>
+<div class="container">
+    <h1 class="text-center mt-4 mb-4">Bonds Careers</h1>
+    <img id="banner" class="img-fluid" src="static/banner.jpg" alt="logo">
+    <h2 class="text-center">About Bonds Careers</h2>
+    <div class="row">
+        <div class="col-md-8">
+            <p class='lead'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
-        <h2 class="text-center mt-4 mb-4">Open Positions</h2>
-        <div>
-           {% for job in jobs %}
-                {% include 'jobitem.html' %}
-           {% endfor %}
+        <div class="col-md-4">
+            <img id="banner" style="width: 500px" class="img-fluid" src="static/workers2.jpg" alt="workers">
         </div>
     </div>
-    {% include 'footer.html' %}
-    {% endblock %}
+    <h2 class="text-center mt-4 mb-4">Open Positions</h2>
+    <div>
+        
+        {% include 'jobitem.html' %}
+       
+    </div>
+</div>
+{% include 'footer.html' %}
+{% endblock %}

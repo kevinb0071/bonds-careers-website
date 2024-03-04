@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %} {{job.title }} {% endblock %}
+{% include 'nav.html' %}
+{% block content %}
+<div class="container">
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-lg-1 mb-5"></div>
+        <div class="col-lg-10 mb-5">
+            <div class="mb-3">
+                <div class="card-body">
+                    <h1 class="text-center">{{ job.title }}</h1>
+                    <h4>Location:</h4>
+                    <p> {{ job.location }}</p>
+                    {% if job.salary %}
+                    <h4>Salary:</h4>
+                    <p> {{ job.prettier_salary }}</p>
+                    {% endif %}
+                    <h4>Job Requirement:</h4>
+                    {% for line in job.requirements.split(".") %}
+                    <p>{{ line }}.</p>
+                    {% endfor %}
+                    <h4>Responsibilities:</h4>
+                    {% for line in job.responsibilities.split(".") %}
+                    <p>{{ line }}.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-1 mb-5"></div>
+    </div>
+</div>
+{% include 'footer.html' %}
+{% endblock %}
