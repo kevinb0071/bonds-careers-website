@@ -1,0 +1,33 @@
+<h1 class="text-center mt-4 mb-4">Apply for the {{ job.title }} position</h1>
+<form method="post" class="form" action="{{ url_for('apply_to_job') }}">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.full_name.label(class="form-label") }}
+        {{ form.full_name(class="form-control", placeholder="John Doe") }}
+    </div>
+    <div class="mb-3">
+        {{ form.email.label(class="form-label") }}
+        {{ form.email(class="form-control", required=required, placeholder="johndoe@abc.com") }}
+    </div>
+    <div class="mb-3">
+        {{ form.linkedin.label(class="form-label") }}
+        {{ form.linkedin(class="form-control", placeholder="https://linked.com/in/johndoe") }}
+    </div>
+    <div class="mb-3">
+        {{ form.education.label(class="form-label") }}
+        {{ form.education(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.work_experience.label(class="form-label") }}
+        {{ form.work_experience(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.resume.label(class="form-label") }}
+        {{ form.resume(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        <input type="hidden" id="job_id" value="{{ job.id }}" name="job_id">
+        {{ form.submit(class="btn btn-primary btn-block") }}
+    </div>
+
+</form>

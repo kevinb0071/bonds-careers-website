@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import datetime, timezone
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, IntegerField
+from wtforms import StringField, SubmitField, TextAreaField, IntegerField, EmailField, FileField
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///careers.sqlite"
@@ -18,6 +19,7 @@ db = SQLAlchemy(app, model_class=Base)
 
 
 class Jobs(db.Model):
+    
     id: Mapped[int] = mapped_column(db.Integer(), primary_key=True)
     title: Mapped[str] = mapped_column(db.String(100))
     location: Mapped[str] = mapped_column(db.String(255))
@@ -25,14 +27,7 @@ class Jobs(db.Model):
     currency: Mapped[str] = mapped_column(db.String(10))
     requirements: Mapped[str] = mapped_column(db.String(255))
     responsibilities: Mapped[str] = mapped_column(db.String(255))
-    created_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc)
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
-    )
-
+    items = db.relationship('Applications', backref='job_application', lazy=True)
     @property
     def prettier_salary(self):
         if len(str(self.salary)) >= 4:
@@ -43,6 +38,19 @@ class Jobs(db.Model):
     def __repr__(self):
         return f"{self.title}"
 
+class Applications(db.Model):
+   
+    id: Mapped[int] = mapped_column(db.Integer(), primary_key=True)
+    job_id: Mapped[int] = mapped_column(db.Integer(), db.ForeignKey('jobs.id'), nullable=True)
+    full_name: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    email: Mapped[str] = mapped_column(db.String(), nullable=False)
+    linkedin: Mapped[str] = mapped_column(db.String(), nullable=True)
+    education: Mapped[str] = mapped_column(db.String(2000), nullable=False)
+    work_experience: Mapped[str] = mapped_column(db.String(2000), nullable=False)
+    resume: Mapped[str] = mapped_column(db.String(255), nullable=True)
+
+    def __repr__(self):
+        return f"{self.full_name}"
 
 with app.app_context():
     db.create_all()
@@ -56,6 +64,19 @@ class JobForm(FlaskForm):
     requirements = StringField(label="Requirements:")
     responsibilities = TextAreaField(label="Responsibilities:")
     submit = SubmitField("Submit")
+
+
+class ApplicationForm(FlaskForm):
+    full_name = StringField(label='Full Name:')
+    email = EmailField(label='Email Address:')
+    linkedin = StringField(label="Your LinkedIn URL:")
+    education = TextAreaField(label='Education:')
+    work_experience = TextAreaField(label='Work Experience:')
+    resume = StringField(label='Your Resume URL:')
+    submit = SubmitField("Apply")
+
+
+
 
 
 @app.route("/")
@@ -84,9 +105,37 @@ def add():
 
 @app.route('/job/<int:id>')
 def show_job(id):
+    form = ApplicationForm()
     job = Jobs.query.filter_by(id=id).first()
-    return render_template('job.html', job=job)
+    return render_template('job.html', job=job, form=form)
+
+@app.route("/job/apply", methods=["GET", "POST"])
+def apply_to_job():
+    form = ApplicationForm()
+    if request.method == 'POST':
+        job_id = request.form.get("job_id")
+        job_id = Jobs.query.filter_by(id=job_id).first()
+
+        application = Applications(
+            job_id = str(job_id),
+            full_name = form.full_name.data,
+            email = form.email.data,
+            linkedin = form.linkedin.data,
+            education = form.education.data,
+            work_experience = form.work_experience.data,
+            resume = form.resume.data
+        )
+        db.session.add(application)
+        db.session.commit()
+        return redirect(url_for('home'))
+        
+
     
+           
+
+
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
