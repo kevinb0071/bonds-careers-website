@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import datetime, timezone
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, IntegerField, EmailField, FileField
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///careers.sqlite"
@@ -16,7 +17,7 @@ class Base(DeclarativeBase):
 
 
 db = SQLAlchemy(app, model_class=Base)
-
+migrate = Migrate(app, db)
 
 class Jobs(db.Model):
     
@@ -127,7 +128,11 @@ def apply_to_job():
         )
         db.session.add(application)
         db.session.commit()
+        flash(f"Congratulations! You have submitted the application for  {job_id.title}", category='success')
         return redirect(url_for('home'))
+    else:
+        flash(f"Unfortunately, There was a problem applying for  {job_id.title}", category='danger')
+        return redirect(url_for('apply_to_job'), job_id=job_id)
         
 
     
